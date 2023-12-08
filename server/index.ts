@@ -4,6 +4,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import Database from 'better-sqlite3'
 import { todos } from '@/db/schema'
 import { z } from 'zod'
+import { eq } from 'drizzle-orm'
 
 const sqlite = new Database('sqlite.db')
 const db = drizzle(sqlite)
@@ -21,6 +22,12 @@ export const appRouter = router({
       await db.insert(todos).values({content: opt.input, done: 0}).run()
       return true
     } 
+  ),
+  setDone: publicProcedure.input(z.object({id: z.number(), done: z.number()})).mutation(
+    async (opt) => {
+      await db.update(todos).set({done: opt.input.done}).where(eq(todos.id, opt.input.id)).run()
+      return true
+    }
   )
   
 })
