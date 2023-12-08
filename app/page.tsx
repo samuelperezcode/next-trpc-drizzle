@@ -1,9 +1,11 @@
 import { TodoList } from './_components/todo-list'
+import { serverClient } from './_trpc/serverClient'
 
-export default function Home() {
+export default async function Home() {
+  const todos = await serverClient.getTodos()
   return (
     <main>
-      <TodoList />
+      <TodoList initialTodos = {todos}/>
     </main>
   )
 }
